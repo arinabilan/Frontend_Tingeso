@@ -22,5 +22,13 @@ const loginClient = credentials => {
     
 }
 
+const savingCapacity = clientData => {
+    return httpClient.post('/api/v1/savingCapacity/', clientData);
+}
 
-export default {getAll, clientRegister, loginClient};
+const createDates = clientData => {
+    return httpClient.post('/api/v1/clientdates/', clientData);
+}
+
+
+export default {getAll, clientRegister, loginClient, savingCapacity, createDates};

@@ -12,6 +12,19 @@ const Profile = () => {
         navigate('/simulateloan');
     };
 
+    const handleSolicitude = () => {
+        // Redirigir a la página de solicitud
+        navigate('/solicitude');
+    };
+
+    const handleClienDates = () => {
+        navigate("/solicitude2");
+    };
+
+    const handleSavingCapacity = () => {
+        navigate("/solicitude3");
+    };
+
     return (
         <Container>
             <Typography variant="h4" gutterBottom>
@@ -34,6 +47,37 @@ const Profile = () => {
                         style={{ marginTop: '20px' }}
                     >
                         Simular el crédito
+                    </Button>
+
+                    {/* Botón para solicitud del crédito */}
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={handleSolicitude}
+                        style={{ marginTop: '20px' }}
+                    >
+                        Solicitud de credito
+                    </Button>
+
+                    <br/>
+                    <br/>
+                    <br/>
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={handleClienDates}
+                        style={{ marginTop: '20px' }}
+                    >
+                        Ingresar datos
+                    </Button>
+
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={handleSavingCapacity}
+                        style={{ marginTop: '20px' }}
+                    >
+                        Cuenta ahorro
                     </Button>
                     
                 </>
