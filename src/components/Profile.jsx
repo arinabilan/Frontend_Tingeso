@@ -25,6 +25,10 @@ const Profile = () => {
         navigate("/solicitude3");
     };
 
+    const handleDocuments = () => {
+        navigate("/documents");
+    };
+
     return (
         <Container>
             <Typography variant="h4" gutterBottom>
@@ -78,6 +82,17 @@ const Profile = () => {
                         style={{ marginTop: '20px' }}
                     >
                         Cuenta ahorro
+                    </Button>
+
+                    <br/>
+
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={handleDocuments}
+                        style={{ marginTop: '20px' }}
+                    >
+                        Subir documentos
                     </Button>
                     
                 </>

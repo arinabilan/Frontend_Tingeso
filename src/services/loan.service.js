@@ -16,4 +16,20 @@ const createSolicitude = (credencials) => {
     return httpClient.post('/api/v1/solicitude/', credencials);
 }
 
-export default { getLoanRequirements, getLoanTypes, getLoanRequirementById, createSolicitude };
+const getAllSolicitudes = () => {
+    return httpClient.get('/api/v1/solicitude/');
+}
+
+const getSolicitude = (id) => {
+    return httpClient.get(`/api/v1/solicitude/${id}`);
+}
+
+const modificateSolicitude = (id, executive) => {
+    return httpClient.put(`/api/v1/solicitude/${id}/`, executive);
+}
+
+const getClientDates = (id) => {
+    return httpClient.get(`/api/v1/clientdates/${id}`);
+}
+
+export default { getLoanRequirements, getLoanTypes, getLoanRequirementById, createSolicitude, getAllSolicitudes, modificateSolicitude, getSolicitude };

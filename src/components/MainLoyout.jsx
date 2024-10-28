@@ -26,6 +26,11 @@ const MainLayout = () => {
                 Register
               </Button>
             </Link>
+            <Link to="/executive">
+              <Button variant="outlined" color="primary">
+                Entrar como ejecutivo
+              </Button>
+            </Link>
           </Box>
         </Container>
   

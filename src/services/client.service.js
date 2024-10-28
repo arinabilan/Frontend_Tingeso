@@ -6,6 +6,10 @@ const getAll = () => {
 
 }
 
+const getClient = (id) => {
+    return httpClient.get(`/api/v1/clients/${id}`);
+}
+
 const clientRegister = userData => {
     
     return httpClient.post('/api/v1/clients/', userData);
@@ -30,5 +34,12 @@ const createDates = clientData => {
     return httpClient.post('/api/v1/clientdates/', clientData);
 }
 
+const getClientDates = (id) => {
+    return httpClient.get(`/api/v1/clientdates/${id}`);
+}
 
-export default {getAll, clientRegister, loginClient, savingCapacity, createDates};
+const getClientCapacity = (id) => {
+    return httpClient.get(`/api/v1/savingCapacity/${id}`);
+}
+
+export default {getAll, clientRegister, loginClient, savingCapacity, createDates, getClientDates, getClientCapacity, getClient};
