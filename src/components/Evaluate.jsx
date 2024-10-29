@@ -40,12 +40,19 @@ const Evaluate = () => {
             const responseCapacity = await clientService.getClientCapacity(solicitudCliente.client.id);
             setClientSavingCapacity(responseCapacity.data);
 
+            const responseDocuments = await documentService.getDocumentsByClientId(solicitudCliente.client.id);
+            setClientDocument(responseDocuments.data);
+
             console.log("Datos del cliente cargados:", response.data); // Verifica que los datos se están cargando correctamente
             console.log("lalala: ", clientSavingCapacity);
         } catch (error) {
             console.error("Error al cargar los datos del cliente:", error);
         }
     };
+
+    const findDocument = (documentId) => { // Busca un documento por su id
+        return clientDocuments.find(document => document.document.id === documentId);
+    }
     
 
     return (
@@ -54,11 +61,7 @@ const Evaluate = () => {
                 Evaluación de Solicitud
             </Typography>
             
-            {/* <Typography>Nombre: {client.name} {client.surname}</Typography>
-            <Typography>Fecha de nacimiento: {client.birthday}</Typography>
-            <br/> */}
-
-            <TableContainer component={Paper} style={{ marginTop: '40px' }}>
+            <TableContainer component={Paper} style={{ marginTop: '20px' }}>
                 <Table style={{ minWidth: '1000px' }}>
                     <TableHead>
                         <TableRow>
@@ -96,7 +99,13 @@ const Evaluate = () => {
                         size="small"
                     />                    
                  CLP</Grid>
-                <Grid size={4}><Link>Ver documento</Link></Grid>
+                <Grid size={4}>
+                { (findDocument(1)) ? ( // 1 es el id del documento que se solicita tener
+                    <Link>Ver documento</Link>
+                ) : (
+                    <span style={{color:'red'}}>Sin documento</span>
+                )}
+                </Grid>
 
                 <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Años con banco:</Grid>
                 <Grid size={4} style={{textAlign: 'left'}}>
@@ -172,7 +181,7 @@ const Evaluate = () => {
             </Typography>
 
             <Grid container rowSpacing={1} columnSpacing={2}>
-                <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Saldo enn cuenta ahorro:</Grid>
+                <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Saldo en cuenta ahorro:</Grid>
                 <Grid size={4}>
                     {clientSavingCapacity.balance} CLP
                     </Grid>
