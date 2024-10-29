@@ -30,6 +30,10 @@ const Executive = () => {
 
     }
 
+    const handleNavigate = () => {
+      navigate("/");
+    }
+
     return (
         <Container maxWidth="xs">
           <Typography variant="h5" gutterBottom>
@@ -58,6 +62,9 @@ const Executive = () => {
             />
             <Button type="submit" variant="contained" color="primary" fullWidth>
               Iniciar Sesión
+            </Button>
+            <Button onClick={handleNavigate} type="submit" variant="contained" color="secondary" fullWidth>
+              Volver
             </Button>
           </form>
         </Container>

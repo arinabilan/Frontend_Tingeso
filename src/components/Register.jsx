@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Container, TextField, Button, Typography, Box } from '@mui/material';
 
 import clientService from '../services/client.service';
 
@@ -28,57 +29,89 @@ const Register = () => {
             console.error('Error en inicio de sesión:', error);
             setError('Credenciales incorrectas. Intenta de nuevo.'); // Mostrar error
           });
-      };
+    };
+
+    const handleNavigate = () => {
+        navigate("/");
+    }
 
     return (
-        <div>
-            <h2>Registro de Cliente</h2>
+        <Container maxWidth="sm">
+            <Box sx={{ textAlign: 'center', mt: 4, mb: 2 }}>
+                <Typography variant="h4" component="h2" gutterBottom>
+                    Registro de Cliente
+                </Typography>
+            </Box>
             <form onSubmit={handleRegister}>
-                <input
-                    type="text"
-                    placeholder="RUT"
+                <TextField
+                    label="RUT"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
                     value={rut}
                     onChange={(e) => setRut(e.target.value)}
                     required
                 />
-                <input
-                    type="text"
-                    placeholder="Nombre"
+                <TextField
+                    label="Nombre"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
                 />
-                <input
-                    type="text"
-                    placeholder="Apellido"
+                <TextField
+                    label="Apellido"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
                     value={surname}
                     onChange={(e) => setSurname(e.target.value)}
                     required
                 />
-                <input
+                <TextField
+                    label="Fecha de Nacimiento"
                     type="date"
-                    placeholder="Fecha de Nacimiento"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    
                     value={birthday}
                     onChange={(e) => setBirthday(e.target.value)}
                     required
                 />
-                <input
+                <TextField
+                    label="Correo Electrónico"
                     type="email"
-                    placeholder="Correo Electrónico"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                 />
-                <input
+                <TextField
+                    label="Contraseña"
                     type="password"
-                    placeholder="Contraseña"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-                <button type="submit">Registrarse</button>
+                <Box sx={{ mt: 3, textAlign: 'center' }}>
+                    <Button type="submit" variant="contained" color="primary">
+                        Registrarse
+                    </Button>
+                    <Button onClick={handleNavigate} type="submit" variant="contained" color="secondary">
+                        Volver
+                    </Button>
+                </Box>
+                
             </form>
-        </div>
+        </Container>
     );
 };
 

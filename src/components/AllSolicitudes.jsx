@@ -31,6 +31,10 @@ const AllSolicitudes = () => {
             .catch((error) => console.error('Error al evaluar solicitud:', error));
     };
 
+    const handleNavigate = () => {
+        navigate("/");
+    }
+
     return (
         <Container maxWidth="xl">
             <Button 
@@ -75,7 +79,16 @@ const AllSolicitudes = () => {
                             ))}
                         </TableBody>
                     </Table>
+                    <Button 
+                        variant="contained" 
+                        color="secondary" 
+                        onClick={handleNavigate}
+                        style={{ marginTop: '20px' }}
+                    >
+                        Volver
+                    </Button>
                 </TableContainer>
+                
             )}
         </Container>
     );

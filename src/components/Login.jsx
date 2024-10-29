@@ -31,6 +31,10 @@ const Login = () => {
           setError('Credenciales incorrectas. Intenta de nuevo.'); // Mostrar error
         });
     };
+
+    const handleNavigate = () => {
+      navigate('/'); // Redirigir a la página perfil
+    }
   
     return (
       <Container maxWidth="xs">
@@ -60,6 +64,9 @@ const Login = () => {
           />
           <Button type="submit" variant="contained" color="primary" fullWidth>
             Iniciar Sesión
+          </Button>
+          <Button onClick = {handleNavigate} type="submit" variant="contained" color="secondary" fullWidth>
+            Volver
           </Button>
         </form>
       </Container>

@@ -29,6 +29,10 @@ const Profile = () => {
         navigate("/documents");
     };
 
+    const handleNavigate = () => {
+        navigate("/");
+    }
+
     return (
         <Container>
             <Typography variant="h4" gutterBottom>
@@ -93,6 +97,15 @@ const Profile = () => {
                         style={{ marginTop: '20px' }}
                     >
                         Subir documentos
+                    </Button>
+
+                    <Button 
+                        variant="contained" 
+                        color="secondary" 
+                        onClick={handleNavigate}
+                        style={{ marginTop: '20px' }}
+                    >
+                        Volver
                     </Button>
                     
                 </>
