@@ -42,4 +42,8 @@ const getClientCapacity = (id) => {
     return httpClient.get(`/api/v1/savingCapacity/${id}`);
 }
 
-export default {getAll, clientRegister, loginClient, savingCapacity, createDates, getClientDates, getClientCapacity, getClient};
+const simulateAmount = (amount, interesRate, years) => {
+    return httpClient.get(`/api/v1/clients/${amount}/${interesRate}/${years}`);
+}
+
+export default {getAll, clientRegister, loginClient, savingCapacity, createDates, getClientDates, getClientCapacity, getClient, simulateAmount};
