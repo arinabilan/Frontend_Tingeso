@@ -6,10 +6,21 @@ import { Typography, TextField, MenuItem,Container, TableContainer, Table, Table
 import Grid from '@mui/material/Grid2';
 import { useNavigate } from 'react-router-dom';
 
+
 const Evaluate = () => {
 
     const [clientDocuments, setClientDocument] = useState([]);
-    const [clientSavingCapacity, setClientSavingCapacity] = useState({});
+    //const [clientSavingCapacity, setClientSavingCapacity] = useState({});
+
+    const [clientSavingCapacity, setClientSavingCapacity] = useState({
+        balance: 0,
+        withdrawals: 0,
+        withdrawal: false,
+        deposits: 0,
+        yearsSavings: 0,
+        recentWithdrawals: 0,
+    });
+
     const [clientDates, setClientDates] = useState({
         monthSalary: 0,
         date: 0,
@@ -19,7 +30,7 @@ const Evaluate = () => {
         mediaSalary: 0,
         monthlyDebt: 0
     });
-    const [clientSolicitude, setClientSolicitude] = useState({});
+    //const [clientSolicitude, setClientSolicitude] = useState({});
     const [client, setClient] = useState({});
 
     const navigate = useNavigate();
@@ -29,22 +40,23 @@ const Evaluate = () => {
         loadEverythingIneed();
     }, []);
 
+
     const loadEverythingIneed = async () => {
         try {
             const response = await clientService.getClientDates(solicitudCliente.client.id);
-            setClientDates(response.data);
+            setClientDates(response.data); //obtengo datos del cliente
 
             const responseClient = await clientService.getClient(solicitudCliente.client.id);
-            setClient(responseClient.data);
+            setClient(responseClient.data); //obtengo cliente
 
             const responseCapacity = await clientService.getClientCapacity(solicitudCliente.client.id);
-            setClientSavingCapacity(responseCapacity.data);
+            setClientSavingCapacity(responseCapacity.data); //obtengo capacidad de ahorro del cliente
 
             const responseDocuments = await documentService.getDocumentsByClientId(solicitudCliente.client.id);
-            setClientDocument(responseDocuments.data);
+            setClientDocument(responseDocuments.data); //obtengo documentos del cliente
 
-            console.log("Datos del cliente cargados:", response.data); // Verifica que los datos se están cargando correctamente
-            console.log("lalala: ", clientSavingCapacity);
+            //console.log("Datos del cliente cargados:", response.data); // Verifica que los datos se están cargando correctamente
+            //console.log("lalala: ", responseCapacity.data);
         } catch (error) {
             console.error("Error al cargar los datos del cliente:", error);
         }
@@ -53,8 +65,12 @@ const Evaluate = () => {
     const findDocument = (documentId) => { // Busca un documento por su id
         return clientDocuments.find(document => document.document.id === documentId);
     }
-    
 
+    const findDocumentbyTitle = (documentTitle) => { // Busca un documento por su id
+        return clientDocuments.find(document => document.document.title === documentTitle);
+    }
+    
+   
     return (
         <Container>
             <Typography variant="h4" gutterBottom>
@@ -69,6 +85,7 @@ const Evaluate = () => {
                             <TableCell style={{fontWeight:'bold'}}>Tipo de Préstamo</TableCell>
                             <TableCell style={{fontWeight:'bold'}}>Monto</TableCell>
                             <TableCell style={{fontWeight:'bold'}}>Tasa de Interés</TableCell>
+                            <TableCell style={{fontWeight:'bold'}}>Plazo solicitado</TableCell>
                             <TableCell style={{fontWeight:'bold'}}>Fecha</TableCell>
                         </TableRow>
                     </TableHead>
@@ -78,6 +95,7 @@ const Evaluate = () => {
                         <TableCell>{solicitudCliente.loanType.type}</TableCell>
                             <TableCell>{solicitudCliente.amount.toLocaleString()} CLP</TableCell>
                             <TableCell>{(solicitudCliente.interestRate * 100).toFixed(2)}%</TableCell>
+                            <TableCell>{(solicitudCliente.deadline / 12)} años</TableCell>
                             <TableCell>{new Date(solicitudCliente.date).toLocaleDateString()}</TableCell>
                         </TableRow>
                     </TableBody>
@@ -98,10 +116,11 @@ const Evaluate = () => {
                         required
                         size="small"
                     />                    
-                 CLP</Grid>
+                 CLP
+                </Grid>
                 <Grid size={4}>
-                { (findDocument(1)) ? ( // 1 es el id del documento que se solicita tener
-                    <Link>Ver documento</Link>
+                { (findDocumentbyTitle('Comprobante de ingresos')) ? ( // 1 es el id del documento que se solicita tener
+                    <Link>{findDocumentbyTitle('Comprobante de ingresos').rutaDocumento}</Link>
                 ) : (
                     <span style={{color:'red'}}>Sin documento</span>
                 )}
@@ -111,29 +130,35 @@ const Evaluate = () => {
                 <Grid size={4} style={{textAlign: 'left'}}>
                     <TextField
                         type="number"
-                        value={clientDates.date}
+                        value={clientDates.date / 12}
                         required
                         size="small"
                     />                         
-                     meses </Grid>
-                <Grid size={4}><Link>Ver documento</Link></Grid>
+                     años </Grid>
+                <Grid size={4}></Grid>
 
                 <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Años trabajando:</Grid>
                 <Grid size={4} style={{textAlign: 'left'}}>
                     <TextField
                         type="number"
-                        value={clientDates.initialContract}
+                        value={clientDates.initialContract / 12}
                         required
                         size="small"
                     />                         
-                     meses </Grid>
-                <Grid size={4}><Link>Ver documento</Link></Grid>
+                     años </Grid>
+                <Grid size={4}></Grid>
 
                 <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Esta en Dicom:</Grid>
                 <Grid size={4} style={{textAlign: 'left'}}>
                     No <Switch checked={clientDates.dicom} /> Si
                 </Grid>
-                <Grid size={4}><Link>Ver documento</Link></Grid>
+                <Grid size={4}>
+                { (findDocumentbyTitle('Certificado Dicom')) ? ( // 1 es el id del documento que se solicita tener
+                    <Link>Ver documento</Link>
+                ) : (
+                    <span style={{color:'red'}}>Sin documento</span>
+                )}
+                </Grid>
 
                 <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Tipo de trabajador:</Grid>
                 <Grid size={4} style={{textAlign: 'left'}}>
@@ -149,8 +174,14 @@ const Evaluate = () => {
                             Con contrato
                         </MenuItem>
                     </TextField>                    
-                    </Grid>
-                <Grid size={4}><Link>Ver documento</Link></Grid>
+                </Grid>
+                <Grid size={4}>
+                    { (findDocumentbyTitle('Contrato laboral')) ? ( // 1 es el id del documento que se solicita tener
+                        <Link>Ver documento</Link>
+                    ) : (
+                        <span style={{color:'red'}}>Sin documento</span>
+                    )}
+                </Grid>
 
                 <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Promedio de ingresos en ultimos 2 años:</Grid>
                 <Grid size={4} style={{textAlign: 'left'}}>
@@ -160,8 +191,15 @@ const Evaluate = () => {
                         required
                         size="small"
                     />                         
-                     CLP</Grid>
-                <Grid size={4}><Link>Ver documento</Link></Grid>
+                     CLP
+                </Grid>
+                <Grid size={4}>
+                    { (findDocumentbyTitle('Comprobante de ingresos de 2 años')) ? ( // 1 es el id del documento que se solicita tener
+                        <Link>Ver documento</Link>
+                    ) : (
+                        <span style={{color:'red'}}>Sin documento</span>
+                    )}
+                </Grid>
 
                 <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Deuda mensual:</Grid>
                 <Grid size={4} style={{textAlign: 'left'}}>
@@ -172,7 +210,7 @@ const Evaluate = () => {
                         size="small"
                     />                         
                      CLP</Grid>
-                <Grid size={4}><Link>Ver documento</Link></Grid>
+                <Grid size={4}></Grid>
             </Grid>
             <br/>
 
@@ -180,32 +218,80 @@ const Evaluate = () => {
                 Capacidad de Ahorro
             </Typography>
 
+            
+
             <Grid container rowSpacing={1} columnSpacing={2}>
                 <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Saldo en cuenta ahorro:</Grid>
+                <Grid size={4} style={{textAlign: 'left'}}>
+                    <TextField
+                        type="number"
+                        value={clientSavingCapacity.balance}
+                        required
+                        size="small"
+                    />
+                    CLP
+                </Grid>
                 <Grid size={4}>
-                    {clientSavingCapacity.balance} CLP
-                    </Grid>
-                <Grid size={4}><Link>Ver documento</Link></Grid>
+                    { (findDocumentbyTitle('Certificado de Cuenta Ahorro')) ? ( // 1 es el id del documento que se solicita tener
+                        <Link>Ver documento</Link>
+                    ) : (
+                        <span style={{color:'red'}}>Sin documento</span>
+                    )}
+                </Grid>
 
                 <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Suma de retiros en ultimos 12 meses:</Grid>
-                <Grid size={4}>{clientSavingCapacity.withdrawals} CLP </Grid>
-                <Grid size={4}><Link>Ver documento</Link></Grid>
+                <Grid size={4} style={{textAlign: 'left'}}>
+                    <TextField
+                        type="number"
+                        value={clientSavingCapacity.withdrawals}
+                        required
+                        size="small"
+                    />
+                    CLP 
+                </Grid>
+                <Grid size={4}></Grid>
 
                 <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Historial de ahorro consistente:</Grid>
-                <Grid size={4}>{clientSavingCapacity.withdrawal ? "Sí" : "No"} </Grid>
-                <Grid size={4}><Link>Ver documento</Link></Grid>
+                <Grid size={4} style={{textAlign: 'left'}}>
+                    No <Switch checked={clientSavingCapacity.withdrawal} /> Si
+                </Grid>
+                <Grid size={4}></Grid>
 
                 <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Suma de depositos mensuales de ultimos 12 meses:</Grid>
-                <Grid size={4}>{clientSavingCapacity.deposits} CLP </Grid>
-                <Grid size={4}><Link>Ver documento</Link></Grid>
+                <Grid size={4} style={{textAlign: 'left'}}>
+                    <TextField
+                        type="number"
+                        value={clientSavingCapacity.deposits}
+                        required
+                        size="small"
+                    />
+                    CLP 
+                </Grid>
+                <Grid size={4}></Grid>
 
                 <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Años de antiguidad de la cuenta de ahorro:</Grid>
-                <Grid size={4}>{clientSavingCapacity.yearsSavings} años</Grid>
-                <Grid size={4}><Link>Ver documento</Link></Grid>
+                <Grid size={4} style={{textAlign: 'left'}}>
+                    <TextField
+                        type="number"
+                        value={clientSavingCapacity.yearsSavings}
+                        required
+                        size="small"
+                    />
+                    años
+                </Grid>
+                <Grid size={4}></Grid>
 
                 <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Suma de retiros en ultimos 6 meses:</Grid>
-                <Grid size={4}>{clientSavingCapacity.recentWithdrawals} CLP</Grid>
-                <Grid size={4}><Link>Ver documento</Link></Grid>
+                <Grid size={4} style={{textAlign: 'left'}}>
+                    <TextField
+                        type="number"
+                        value={clientSavingCapacity.recentWithdrawals}
+                        required
+                        size="small"
+                    />
+                    CLP
+                </Grid>
+                <Grid size={4}></Grid>
             </Grid>
             <br/>
 

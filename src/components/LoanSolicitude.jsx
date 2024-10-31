@@ -130,7 +130,7 @@ const LoanSolicitude = () => {
                 />
                 
                 <TextField
-                    label="Plazo en meses"
+                    label="Plazo en años"
                     type="number"
                     value={deadline}
                     onChange={(e) => setDeadline(e.target.value)}

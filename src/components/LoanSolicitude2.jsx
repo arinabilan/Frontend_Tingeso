@@ -72,7 +72,7 @@ const LoanSolicitude2 = () => {
                     />
                     
                     <TextField
-                        label="Meses con el banco"
+                        label="Años con el banco"
                         type="number"
                         value={timeClient}
                         onChange={(e) => setTimeClient(e.target.value)}
@@ -82,7 +82,7 @@ const LoanSolicitude2 = () => {
                     
 
                     <TextField
-                        label="Meses con contrato"
+                        label="Años con contrato"
                         type="number"
                         value={initialContract}
                         onChange={(e) => setInitialContract(e.target.value)}
