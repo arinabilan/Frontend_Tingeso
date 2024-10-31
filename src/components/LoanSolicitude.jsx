@@ -18,12 +18,16 @@ const LoanSolicitude = () => {
     const [state, setState] = useState(1); //estado de solicitud 1 - pendiente por defecto
     const [newSolicitude, setNewSolicitude] = useState({}); //en esta variable se guardó nueva solicitud que se acaba de crear para seguir con siguiente paso
     const [selectedType, setSelectedType] = useState('');
-
+    const [loanRequirementSelected, setLoanRequirementSelected] = useState(null);
 
     useEffect(() => {
         loadLoanTypes();
         loadLoanRequirements();
-    }, []);
+        if (selectedType) {
+            const req = loadLoanRequirementsById(selectedType);
+            setLoanRequirementSelected(req);
+        }
+    }, [selectedType]);
 
     const loadLoanTypes = async () => {
         const response = await loanService.getLoanTypes();
@@ -134,6 +138,9 @@ const LoanSolicitude = () => {
                 </Button>
 
             </form>
+            {loanRequirementSelected?.documents?.map(d => (
+                <span key={d.id}>{d.title}<br/></span>
+            ))}
             
         </Container>
     );

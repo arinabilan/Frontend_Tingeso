@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Button, TextField, Container, Typography, MenuItem } from '@mui/material';
-import documentService from '../services/document.service';
+import React, { useEffect, useState } from "react";
+import { TextField, Button, Typography, Container, Box, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import documentService from "../services/document.service";
 
 const Documents = () => {
-    const [file, setFile] = useState(null);
-    const [documentType, setDocumentType] = useState('');
     const [documents, setDocuments] = useState([]);
+    const [fileSalary, setFileSalary] = useState(null);
+    const [fileDicom, setFileDicom] = useState(null);
+    const [fileCapacity, setFileCapacity] = useState(null);
+    const [docSalary, setDocSalary] = useState(null);
+    const [docDicom, setDocDicom] = useState(null);
+    const [docCapacity, setDocCapacity] = useState(null);
+
     const navigate = useNavigate();
     const userData = JSON.parse(localStorage.getItem('userData'));
 
@@ -17,25 +22,36 @@ const Documents = () => {
     const loadDocumentTypes = async () => {
         const response = await documentService.getAllDocuments();
         setDocuments(response.data);
+
+        // Obtén los documentos específicos por su título
+        const responseSalary = await documentService.getDocumentByTitle('Comprobante de ingresos de 2 años');
+        const responseDicom = await documentService.getDocumentByTitle('Certificado Dicom');
+        const responseCapacity = await documentService.getDocumentByTitle('Certificado de Cuenta Ahorro');
+
+        setDocSalary(responseSalary.data);
+        setDocDicom(responseDicom.data);
+        setDocCapacity(responseCapacity.data);
     };
 
-    const handleFileChange = (e) => {
+    const handleFileChange = (e, setFile) => {
         setFile(e.target.files[0]);
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleUpload = (file, docType) => {
+        if (!file) {
+            alert("Por favor selecciona un archivo.");
+            return;
+        }
 
         const formData = new FormData();
         formData.append('file', file);
 
-        documentService.uploadDocument(userData.id, documentType, formData)
+        documentService.uploadDocument(userData.id, docType.id, formData)
             .then(() => {
-                alert("Documento subido exitosamente");
-                navigate("/profile"); // Redirige al perfil después de subir
+                alert(`Documento ${docType.title} subido exitosamente`);
             })
             .catch((error) => {
-                console.error('Error al subir documento:', error);
+                console.error(`Error al subir el documento ${docType.title}:`, error);
                 alert("Error al subir documento");
             });
     };
@@ -45,29 +61,63 @@ const Documents = () => {
             <Typography variant="h4" gutterBottom>
                 Subir Documentos
             </Typography>
-            <form onSubmit={handleSubmit}>
-                <TextField
-                    select
-                    label="Tipo de documento"
-                    value={documentType}
-                    onChange={(e) => setDocumentType(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                >
-                    {documents.map((t) => (
-                        <MenuItem key={t.id} value={t.id}>
-                        {t.title}
-                        </MenuItem>
-                    ))}
-                </TextField>
-                <input type="file" onChange={handleFileChange} required />
-                <Button type="submit" variant="contained" color="primary">
-                    Subir Documento
-                </Button>
-                <Button onClick={() => navigate("/profile")} variant="outlined" color="secondary">
-                    Cancelar
-                </Button>
-            </form>
+
+            {/* Comprobante de ingresos de 2 años */}
+            <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
+                <Box>
+                    <Typography variant="h6">{docSalary?.title || "Cargando..."}</Typography>
+                    <input type="file" onChange={(e) => handleFileChange(e, setFileSalary)} />
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={() => handleUpload(fileSalary, docSalary)}
+                        sx={{ marginTop: 1 }}
+                    >
+                        Subir Comprobante de ingresos
+                    </Button>
+                </Box>
+            </Paper>
+
+            {/* Certificado Dicom */}
+            <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
+                <Box>
+                    <Typography variant="h6">{docDicom?.title || "Cargando..."}</Typography>
+                    <input type="file" onChange={(e) => handleFileChange(e, setFileDicom)} />
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={() => handleUpload(fileDicom, docDicom)}
+                        sx={{ marginTop: 1 }}
+                    >
+                        Subir Certificado Dicom
+                    </Button>
+                </Box>
+            </Paper>
+
+            {/* Certificado de Cuenta Ahorro */}
+            <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
+                <Box>
+                    <Typography variant="h6">{docCapacity?.title || "Cargando..."}</Typography>
+                    <input type="file" onChange={(e) => handleFileChange(e, setFileCapacity)} />
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={() => handleUpload(fileCapacity, docCapacity)}
+                        sx={{ marginTop: 1 }}
+                    >
+                        Subir Certificado de Cuenta Ahorro
+                    </Button>
+                </Box>
+            </Paper>
+
+            <Button 
+                onClick={() => navigate("/profile")} 
+                variant="outlined" 
+                color="secondary" 
+                sx={{ marginTop: 2 }}
+            >
+                Cancelar
+            </Button>
         </Container>
     );
 };
