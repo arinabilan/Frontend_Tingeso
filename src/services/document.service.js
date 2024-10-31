@@ -16,4 +16,8 @@ const getDocumentByTitle = (title) => {
     return httpClient.get(`/api/v1/documents/title/${title}`);
 }
 
-export default {uploadDocument, getAllDocuments, getDocumentsByClientId, getDocumentByTitle};
+const putDocument = (document) => {
+    return httpClient.put(`/api/v1/clientdocuments/`, document);
+}
+
+export default {uploadDocument, getAllDocuments, getDocumentsByClientId, getDocumentByTitle,putDocument};

@@ -62,15 +62,21 @@ const Evaluate = () => {
         }
     };
 
-    const findDocument = (documentId) => { // Busca un documento por su id
-        return clientDocuments.find(document => document.document.id === documentId);
+    const saveDocumentState = (e, documentId) => {
+        var cd = clientDocuments.find(d => d.document.id === documentId);
+        cd.estado = e.target.checked;
+        documentService.putDocument(cd);
+        loadEverythingIneed();
+    }
+
+    const showOnlyName = (ruta) => {
+        return ruta.split('_')[1]
     }
 
     const findDocumentbyTitle = (documentTitle) => { // Busca un documento por su id
         return clientDocuments.find(document => document.document.title === documentTitle);
     }
-    
-   
+
     return (
         <Container>
             <Typography variant="h4" gutterBottom>
@@ -120,7 +126,10 @@ const Evaluate = () => {
                 </Grid>
                 <Grid size={4}>
                 { (findDocumentbyTitle('Comprobante de ingresos')) ? ( // 1 es el id del documento que se solicita tener
-                    <Link>{findDocumentbyTitle('Comprobante de ingresos').rutaDocumento}</Link>
+                    <Container>
+                        <Link>{showOnlyName(findDocumentbyTitle('Comprobante de ingresos').rutaDocumento)}</Link><br/>
+                        No aprobado <Switch checked={findDocumentbyTitle('Comprobante de ingresos').estado} onClick={(e) => {saveDocumentState(e, findDocumentbyTitle('Comprobante de ingresos').document.id)}}  /> Aprobado
+                    </Container>
                 ) : (
                     <span style={{color:'red'}}>Sin documento</span>
                 )}
@@ -150,7 +159,7 @@ const Evaluate = () => {
 
                 <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Esta en Dicom:</Grid>
                 <Grid size={4} style={{textAlign: 'left'}}>
-                    No <Switch checked={clientDates.dicom} /> Si
+                    No <Switch checked={clientDates.dicom} onClick={(e) => setClientDates({...clientDates, dicom: e.target.checked})} /> Si
                 </Grid>
                 <Grid size={4}>
                 { (findDocumentbyTitle('Certificado Dicom')) ? ( // 1 es el id del documento que se solicita tener
