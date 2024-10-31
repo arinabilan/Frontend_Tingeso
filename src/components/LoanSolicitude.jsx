@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import clientService from '../services/client.service';
+import documentService from '../services/document.service';
 import loanService from '../services/loan.service';
-import { Button, TextField, FormControlLabel, Checkbox, Typography, Container, MenuItem } from '@mui/material';
+import { Button, TextField, FormControlLabel, Checkbox, Typography, Container, MenuItem, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const LoanSolicitude = () => {
@@ -19,6 +20,8 @@ const LoanSolicitude = () => {
     const [newSolicitude, setNewSolicitude] = useState({}); //en esta variable se guardó nueva solicitud que se acaba de crear para seguir con siguiente paso
     const [selectedType, setSelectedType] = useState('');
     const [loanRequirementSelected, setLoanRequirementSelected] = useState(null);
+
+    const [files, setFiles] = useState({}); // Estado para almacenar los archivos seleccionados
 
     useEffect(() => {
         loadLoanTypes();
@@ -45,6 +48,24 @@ const LoanSolicitude = () => {
 
     const handleProfile = () => {
         navigate('/profile');
+    };
+
+
+    const handleFileChange = (documentId, file) => {
+        setFiles(prevFiles => ({ ...prevFiles, [documentId]: file }));
+    };
+
+    const handleDocumentUpload = async (documentId) => {
+        const formData = new FormData();
+        formData.append('file', files[documentId]);
+
+        try {
+            await documentService.uploadDocument(userData.id, documentId, formData);
+            alert("Documento subido exitosamente");
+        } catch (error) {
+            console.error('Error al subir documento:', error);
+            alert("Error al subir documento");
+        }
     };
 
 
@@ -82,7 +103,6 @@ const LoanSolicitude = () => {
         <Container>
             <Typography variant="h4" gutterBottom>
                 Solicitud de Préstamo 
-                <br/> Usted eligio: {selectedType}
             </Typography>
             <form onSubmit={handleSolicitude}>
                 <TextField
@@ -119,7 +139,7 @@ const LoanSolicitude = () => {
                 />
 
                 <TextField
-                    label="Data de solicitud"
+                    label="Fecha de solicitud"
                     type="date"
                     value={date}
                     onChange={(e) => setDate(e.target.value)}
@@ -139,9 +159,24 @@ const LoanSolicitude = () => {
 
             </form>
             {loanRequirementSelected?.documents?.map(d => (
-                <span key={d.id}>{d.title}<br/></span>
+                <Box key={d.id} display="flex" alignItems="center" mt={2}>
+                <Typography>{d.title}</Typography>
+                <input
+                    type="file"
+                    onChange={(e) => handleFileChange(d.id, e.target.files[0])}
+                    style={{ marginLeft: '10px' }}
+                />
+                <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => handleDocumentUpload(d.id)}
+                    sx={{ ml: 2 }}
+                >
+                    Subir {d.title}
+                </Button>
+                </Box>
+                
             ))}
-            
         </Container>
     );
 };
