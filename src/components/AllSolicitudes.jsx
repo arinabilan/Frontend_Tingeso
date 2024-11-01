@@ -41,8 +41,15 @@ const AllSolicitudes = () => {
                 onClick={handleShowSolicitudes} 
                 variant="contained" 
                 color="primary" 
-                style={{ position: 'fixed', top: '20px', right: '50px', left: '50px' }}>
+                style={{ position: 'fixed', top: '15px', right: '50px', left: '50px' }}>
                 Ver todos solicitudes
+            </Button>
+            <Button 
+                onClick={handleNavigate} 
+                variant="contained" 
+                color="secondary" 
+                style={{ position: 'fixed', top: '53px', right: '50px', left: '50px' }}>
+                Volver
             </Button>
 
             {showSolicitudes && (
@@ -79,14 +86,7 @@ const AllSolicitudes = () => {
                             ))}
                         </TableBody>
                     </Table>
-                    <Button 
-                        variant="contained" 
-                        color="secondary" 
-                        onClick={handleNavigate}
-                        style={{ marginTop: '20px' }}
-                    >
-                        Volver
-                    </Button>
+                    
                 </TableContainer>
                 
             )}
