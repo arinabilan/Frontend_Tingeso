@@ -8,9 +8,11 @@ const Documents = () => {
     const [fileSalary, setFileSalary] = useState(null);
     const [fileDicom, setFileDicom] = useState(null);
     const [fileCapacity, setFileCapacity] = useState(null);
+    const [fileContract, setFileContract] = useState(null);
     const [docSalary, setDocSalary] = useState(null);
     const [docDicom, setDocDicom] = useState(null);
     const [docCapacity, setDocCapacity] = useState(null);
+    const [docContract, setDocContract] = useState(null);
 
     const navigate = useNavigate();
     const userData = JSON.parse(localStorage.getItem('userData'));
@@ -27,10 +29,12 @@ const Documents = () => {
         const responseSalary = await documentService.getDocumentByTitle('Comprobante de ingresos de 2 años');
         const responseDicom = await documentService.getDocumentByTitle('Certificado Dicom');
         const responseCapacity = await documentService.getDocumentByTitle('Certificado de Cuenta Ahorro');
+        const responseContract = await documentService.getDocumentByTitle('Contrato laboral');
 
         setDocSalary(responseSalary.data);
         setDocDicom(responseDicom.data);
         setDocCapacity(responseCapacity.data);
+        setDocContract(responseContract.data);
     };
 
     const handleFileChange = (e, setFile) => {
@@ -106,6 +110,21 @@ const Documents = () => {
                         sx={{ marginTop: 1 }}
                     >
                         Subir Certificado de Cuenta Ahorro
+                    </Button>
+                </Box>
+            </Paper>
+            {/* Contrato laboral */}
+            <Paper elevation={3} sx={{ padding: 2, marginBottom: 2 }}>
+                <Box>
+                    <Typography variant="h6">{docContract?.title || "Cargando..."}</Typography>
+                    <input type="file" onChange={(e) => handleFileChange(e, setFileContract)} />
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={() => handleUpload(fileContract, docContract)}
+                        sx={{ marginTop: 1 }}
+                    >
+                        Subir Contrato laboral
                     </Button>
                 </Box>
             </Paper>
