@@ -2,10 +2,50 @@ import React, { useState, useEffect } from "react";
 import loanService from "../services/loan.service";
 import documentService from "../services/document.service";
 import clientService from "../services/client.service";
-import { Typography, TextField, MenuItem,Container, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Button, Link,Switch } from '@mui/material';
+import { Typography, TextField, MenuItem,Container, TableContainer, Table, TableHead, TableRow,
+    TableCell, TableBody, Paper, Button, Link, Switch, Tooltip } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useNavigate } from 'react-router-dom';
+import PageviewIcon from '@mui/icons-material/Pageview';
 
+// Agregar este componente justo antes de tu componente Evaluate
+const DocumentDisplay = ({ documentTitle, clientDocuments, onSwitchChange }) => {
+    const findDocumentbyTitle = (documentTitle) => {
+        return clientDocuments.find(document => document.document.title === documentTitle);
+    };
+
+    const showOnlyName = (ruta) => {
+        return 'Ver ' + ruta.split('_')[1];
+    };
+
+    const showState = () => {
+        return document.estado ? ' Aprobado' : ' No aprobado';
+    };
+
+    const document = findDocumentbyTitle(documentTitle);
+
+    const viewDocument = (fileName) => {
+        return documentService.viewDocument(fileName);
+    }
+
+    if (!document) {
+        return <span style={{color:'red'}}>Sin documento</span>;
+    }
+
+    return (
+        <Container>
+            <Tooltip title={showOnlyName(document.rutaDocumento)} arrow placement="top">
+                <Link href={viewDocument(document.rutaDocumento)} target="_blank" rel="noopener noreferrer"><PageviewIcon fontSize="large" style={{verticalAlign:'bottom'}}/></Link>
+            </Tooltip>
+            <Tooltip title={showState()} arrow placement="top">
+            <Switch
+                checked={document.estado}
+                onClick={(e) => onSwitchChange(e, document.document.id)}
+            />
+            </Tooltip>
+        </Container>
+    );
+};
 
 const Evaluate = () => {
 
@@ -35,7 +75,7 @@ const Evaluate = () => {
 
     const navigate = useNavigate();
     const solicitudCliente = JSON.parse(localStorage.getItem('solicitudCliente'));
-    
+
     useEffect(() => {
         loadEverythingIneed();
     }, []);
@@ -69,12 +109,14 @@ const Evaluate = () => {
         loadEverythingIneed();
     }
 
-    const showOnlyName = (ruta) => {
-        return ruta.split('_')[1]
-    }
-
-    const findDocumentbyTitle = (documentTitle) => { // Busca un documento por su id
-        return clientDocuments.find(document => document.document.title === documentTitle);
+    const handleEvaluate = async () => {
+        try {
+            await clientService.updateDates(clientDates);
+            await clientService.updateCapacity(clientSavingCapacity);
+        }
+        catch (error) {
+            console.error("Error al evaluar solicitud:", error);
+        }
     }
 
     return (
@@ -82,7 +124,7 @@ const Evaluate = () => {
             <Typography variant="h4" gutterBottom>
                 Evaluación de Solicitud
             </Typography>
-            
+
             <TableContainer component={Paper} style={{ marginTop: '20px' }}>
                 <Table style={{ minWidth: '1000px' }}>
                     <TableHead>
@@ -114,67 +156,68 @@ const Evaluate = () => {
             </Typography>
 
             <Grid container rowSpacing={0} columnSpacing={2}>
-                <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Ingreso Mensual:</Grid>
-                <Grid size={4} style={{textAlign: 'left'}}>
+                <Grid size={4} style={{textAlign:'left', fontWeight:'bold'}}>Ingreso Mensual:</Grid>
+                <Grid size={4} style={{textAlign:'left'}}>
                     <TextField
                         type="number"
                         value={clientDates.monthSalary}
                         required
                         size="small"
-                    />                    
-                 CLP
+                        onChange={(e) => setClientDates({...clientDates, monthSalary: e.target.value})}
+                    />
+                    &nbsp;CLP
                 </Grid>
                 <Grid size={4}>
-                { (findDocumentbyTitle('Comprobante de ingresos')) ? ( // 1 es el id del documento que se solicita tener
-                    <Container>
-                        <Link>{showOnlyName(findDocumentbyTitle('Comprobante de ingresos').rutaDocumento)}</Link><br/>
-                        No aprobado <Switch checked={findDocumentbyTitle('Comprobante de ingresos').estado} onClick={(e) => {saveDocumentState(e, findDocumentbyTitle('Comprobante de ingresos').document.id)}}  /> Aprobado
-                    </Container>
-                ) : (
-                    <span style={{color:'red'}}>Sin documento</span>
-                )}
+                    <DocumentDisplay
+                        documentTitle="Comprobante de ingresos"
+                        clientDocuments={clientDocuments}
+                        onSwitchChange={saveDocumentState}
+                    />
                 </Grid>
 
-                <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Años con banco:</Grid>
-                <Grid size={4} style={{textAlign: 'left'}}>
+                <Grid size={4} style={{textAlign:'left', fontWeight:'bold'}}>Años con banco:</Grid>
+                <Grid size={4} style={{textAlign:'left'}}>
                     <TextField
                         type="number"
-                        value={clientDates.date / 12}
+                        value={clientDates.date}
                         required
                         size="small"
-                    />                         
-                     años </Grid>
+                        onChange={(e) => setClientDates({...clientDates, date: e.target.value})}
+                    />
+                    &nbsp;Años </Grid>
                 <Grid size={4}></Grid>
 
-                <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Años trabajando:</Grid>
-                <Grid size={4} style={{textAlign: 'left'}}>
+                <Grid size={4} style={{textAlign:'left', fontWeight:'bold'}}>Años trabajando:</Grid>
+                <Grid size={4} style={{textAlign:'left'}}>
                     <TextField
                         type="number"
-                        value={clientDates.initialContract / 12}
+                        value={clientDates.initialContract}
                         required
                         size="small"
-                    />                         
-                     años </Grid>
+                        onChange={(e) => setClientDates({...clientDates, initialContract: e.target.value})}
+                    />
+                    &nbsp;Años </Grid>
                 <Grid size={4}></Grid>
 
-                <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Esta en Dicom:</Grid>
-                <Grid size={4} style={{textAlign: 'left'}}>
+                <Grid size={4} style={{textAlign:'left', fontWeight:'bold'}}>Esta en Dicom:</Grid>
+                <Grid size={4} style={{textAlign:'left'}}>
                     No <Switch checked={clientDates.dicom} onClick={(e) => setClientDates({...clientDates, dicom: e.target.checked})} /> Si
                 </Grid>
                 <Grid size={4}>
-                { (findDocumentbyTitle('Certificado Dicom')) ? ( // 1 es el id del documento que se solicita tener
-                    <Link>Ver documento</Link>
-                ) : (
-                    <span style={{color:'red'}}>Sin documento</span>
-                )}
+                    <DocumentDisplay
+                        documentTitle="Certificado Dicom"
+                        clientDocuments={clientDocuments}
+                        onSwitchChange={saveDocumentState}
+                    />
                 </Grid>
 
-                <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Tipo de trabajador:</Grid>
-                <Grid size={4} style={{textAlign: 'left'}}>
+                <Grid size={4} style={{textAlign:'left', fontWeight:'bold'}}>Tipo de trabajador:</Grid>
+                <Grid size={4} style={{textAlign:'left'}}>
                     <TextField
                         select
                         value={clientDates.type}
                         size="small"
+                        onChange={(e) => setClientDates({...clientDates, type: e.target.value})}
                     >
                         <MenuItem key={1} value={1}>
                             Independiente
@@ -182,43 +225,45 @@ const Evaluate = () => {
                         <MenuItem key={2} value={2}>
                             Con contrato
                         </MenuItem>
-                    </TextField>                    
+                    </TextField>
                 </Grid>
                 <Grid size={4}>
-                    { (findDocumentbyTitle('Contrato laboral')) ? ( // 1 es el id del documento que se solicita tener
-                        <Link>Ver documento</Link>
-                    ) : (
-                        <span style={{color:'red'}}>Sin documento</span>
-                    )}
+                    <DocumentDisplay
+                        documentTitle="Contrato laboral"
+                        clientDocuments={clientDocuments}
+                        onSwitchChange={saveDocumentState}
+                    />
                 </Grid>
 
-                <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Promedio de ingresos en ultimos 2 años:</Grid>
-                <Grid size={4} style={{textAlign: 'left'}}>
+                <Grid size={4} style={{textAlign:'left', fontWeight:'bold'}}>Promedio de ingresos en ultimos 2 años:</Grid>
+                <Grid size={4} style={{textAlign:'left'}}>
                     <TextField
                         type="number"
                         value={clientDates.mediaSalary}
                         required
                         size="small"
-                    />                         
-                     CLP
+                        onChange={(e) => setClientDates({...clientDates, mediaSalary: e.target.value})}
+                    />
+                    &nbsp;CLP
                 </Grid>
                 <Grid size={4}>
-                    { (findDocumentbyTitle('Comprobante de ingresos de 2 años')) ? ( // 1 es el id del documento que se solicita tener
-                        <Link>Ver documento</Link>
-                    ) : (
-                        <span style={{color:'red'}}>Sin documento</span>
-                    )}
+                    <DocumentDisplay
+                        documentTitle="Comprobante de ingresos de 2 años"
+                        clientDocuments={clientDocuments}
+                        onSwitchChange={saveDocumentState}
+                    />
                 </Grid>
 
-                <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Deuda mensual:</Grid>
-                <Grid size={4} style={{textAlign: 'left'}}>
+                <Grid size={4} style={{textAlign:'left', fontWeight:'bold'}}>Deuda mensual:</Grid>
+                <Grid size={4} style={{textAlign:'left'}}>
                 <TextField
                         type="number"
                         value={clientDates.monthlyDebt}
                         required
                         size="small"
-                    />                         
-                     CLP</Grid>
+                        onChange={(e) => setClientDates({...clientDates, monthlyDebt: e.target.value})}
+                    />
+                    &nbsp;CLP</Grid>
                 <Grid size={4}></Grid>
             </Grid>
             <br/>
@@ -227,78 +272,81 @@ const Evaluate = () => {
                 Capacidad de Ahorro
             </Typography>
 
-            
-
             <Grid container rowSpacing={1} columnSpacing={2}>
-                <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Saldo en cuenta ahorro:</Grid>
-                <Grid size={4} style={{textAlign: 'left'}}>
+                <Grid size={4} style={{textAlign:'left', fontWeight:'bold'}}>Saldo en cuenta ahorro:</Grid>
+                <Grid size={4} style={{textAlign:'left'}}>
                     <TextField
                         type="number"
                         value={clientSavingCapacity.balance}
                         required
                         size="small"
+                        onChange={(e) => setClientSavingCapacity({...clientSavingCapacity, balance: e.target.value})}
                     />
-                    CLP
+                    &nbsp;CLP
                 </Grid>
                 <Grid size={4}>
-                    { (findDocumentbyTitle('Certificado de Cuenta Ahorro')) ? ( // 1 es el id del documento que se solicita tener
-                        <Link>Ver documento</Link>
-                    ) : (
-                        <span style={{color:'red'}}>Sin documento</span>
-                    )}
+                    <DocumentDisplay
+                        documentTitle="Certificado de Cuenta Ahorro"
+                        clientDocuments={clientDocuments}
+                        onSwitchChange={saveDocumentState}
+                    />
                 </Grid>
 
-                <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Suma de retiros en ultimos 12 meses:</Grid>
-                <Grid size={4} style={{textAlign: 'left'}}>
+                <Grid size={4} style={{textAlign:'left', fontWeight:'bold'}}>Suma de retiros en ultimos 12 meses:</Grid>
+                <Grid size={4} style={{textAlign:'left'}}>
                     <TextField
                         type="number"
                         value={clientSavingCapacity.withdrawals}
                         required
                         size="small"
+                        onChange={(e) => setClientSavingCapacity({...clientSavingCapacity, withdrawals: e.target.value})}
                     />
-                    CLP 
+                    &nbsp;CLP
                 </Grid>
                 <Grid size={4}></Grid>
 
-                <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Historial de ahorro consistente:</Grid>
-                <Grid size={4} style={{textAlign: 'left'}}>
-                    No <Switch checked={clientSavingCapacity.withdrawal} /> Si
+                <Grid size={4} style={{textAlign:'left', fontWeight:'bold'}}>Historial de ahorro consistente:</Grid>
+                <Grid size={4} style={{textAlign:'left'}}>
+                    No <Switch checked={clientSavingCapacity.withdrawal} onClick={(e) => setClientSavingCapacity({...clientSavingCapacity, withdrawal: e.target.checked})} /> Si
                 </Grid>
                 <Grid size={4}></Grid>
 
-                <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Suma de depositos mensuales de ultimos 12 meses:</Grid>
-                <Grid size={4} style={{textAlign: 'left'}}>
+                <Grid size={4} style={{textAlign:'left', fontWeight:'bold'}}>Suma de depositos mensuales de ultimos 12 meses:</Grid>
+                <Grid size={4} style={{textAlign:'left'}}>
                     <TextField
                         type="number"
                         value={clientSavingCapacity.deposits}
                         required
                         size="small"
+                        onChange={(e) => setClientSavingCapacity({...clientSavingCapacity, deposits: e.target.value})}
                     />
-                    CLP 
+                    &nbsp;CLP
                 </Grid>
                 <Grid size={4}></Grid>
 
-                <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Años de antiguidad de la cuenta de ahorro:</Grid>
-                <Grid size={4} style={{textAlign: 'left'}}>
+                <Grid size={4} style={{textAlign:'left', fontWeight:'bold'}}>Años de antiguidad de la cuenta de ahorro:</Grid>
+                <Grid size={4} style={{textAlign:'left'}}>
                     <TextField
                         type="number"
                         value={clientSavingCapacity.yearsSavings}
                         required
                         size="small"
+                        onChange={(e) => setClientSavingCapacity({...clientSavingCapacity, yearsSavings: e.target.value})}
                     />
-                    años
+                    &nbsp;Años
                 </Grid>
                 <Grid size={4}></Grid>
 
-                <Grid size={4} style={{textAlign: 'left', fontWeight:'bold'}}>Suma de retiros en ultimos 6 meses:</Grid>
-                <Grid size={4} style={{textAlign: 'left'}}>
+                <Grid size={4} style={{textAlign:'left', fontWeight:'bold'}}>Suma de retiros en ultimos 6 meses:</Grid>
+                <Grid size={4} style={{textAlign:'left'}}>
                     <TextField
                         type="number"
                         value={clientSavingCapacity.recentWithdrawals}
                         required
                         size="small"
+                        onChange={(e) => setClientSavingCapacity({...clientSavingCapacity, recentWithdrawals: e.target.value})}
                     />
-                    CLP
+                    &nbsp;CLP
                 </Grid>
                 <Grid size={4}></Grid>
             </Grid>
@@ -307,9 +355,10 @@ const Evaluate = () => {
             <Button
                 variant="contained"
                 color="secondary"
+                onClick={handleEvaluate}
             >
                 Evaluar
-            </Button>
+            </Button>&nbsp;
             <Button
                 variant="contained"
                 color="secondary"
@@ -319,8 +368,6 @@ const Evaluate = () => {
             </Button>
         </Container>
     );
-
-
 }
 
 export default Evaluate;

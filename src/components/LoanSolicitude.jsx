@@ -16,7 +16,7 @@ const LoanSolicitude = () => {
     const [deadline, setDeadline] = useState(0); //plazo solicitado
     const [amount, setAmount] = useState(0); //monto solicitado
     const [date, setDate] = useState('2024-10-24'); //data de solicitud
-    const [state, setState] = useState(1); //estado de solicitud 1 - pendiente por defecto
+    const [state, setState] = useState(0); //estado de solicitud 1 - pendiente por defecto
     const [newSolicitude, setNewSolicitude] = useState({}); //en esta variable se guardó nueva solicitud que se acaba de crear para seguir con siguiente paso
     const [selectedType, setSelectedType] = useState('');
     const [loanRequirementSelected, setLoanRequirementSelected] = useState(null);
@@ -98,11 +98,11 @@ const LoanSolicitude = () => {
             });
     }
 
-    
+
     return (
         <Container>
             <Typography variant="h4" gutterBottom>
-                Solicitud de Préstamo 
+                Solicitud de Préstamo
             </Typography>
             <form onSubmit={handleSolicitude}>
                 <TextField
@@ -128,7 +128,7 @@ const LoanSolicitude = () => {
                     fullWidth
                     margin="normal"
                 />
-                
+
                 <TextField
                     label="Plazo en años"
                     type="number"
@@ -146,7 +146,7 @@ const LoanSolicitude = () => {
                     fullWidth
                     margin="normal"
                     required
-                    
+
                 />
 
                 <Button type="submit" variant="contained" color="primary">
@@ -175,7 +175,7 @@ const LoanSolicitude = () => {
                     Subir {d.title}
                 </Button>
                 </Box>
-                
+
             ))}
         </Container>
     );

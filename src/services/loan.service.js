@@ -24,8 +24,8 @@ const getSolicitude = (id) => {
     return httpClient.get(`/api/v1/solicitude/${id}`);
 }
 
-const modificateSolicitude = (id, executive) => {
-    return httpClient.put(`/api/v1/solicitude/${id}/`, executive);
+const modificateSolicitude = (id, executive, state) => {
+    return httpClient.put(`/api/v1/solicitude/${id}/${state}`, executive);
 }
 
 const getPercent = (rate) => {

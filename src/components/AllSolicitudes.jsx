@@ -12,7 +12,7 @@ const AllSolicitudes = () => {
     useEffect(() => {
         loadSolicitude();
     }, []);
-    
+
     const loadSolicitude = async () => {
         const response = await loanService.getAllSolicitudes();
         setAllSolicitudes(response.data);
@@ -22,7 +22,7 @@ const AllSolicitudes = () => {
 
     const handleEvaluate = (e, solicitudId) => {
         e.preventDefault();
-        loanService.modificateSolicitude(solicitudId, userExecutive)
+        loanService.modificateSolicitude(solicitudId, userExecutive, 1)
             .then((response) => {
                 console.log('Solicitud modificada:', response.data);
                 localStorage.setItem('solicitudCliente', JSON.stringify(response.data));
@@ -37,17 +37,17 @@ const AllSolicitudes = () => {
 
     return (
         <Container maxWidth="xl">
-            <Button 
-                onClick={handleShowSolicitudes} 
-                variant="contained" 
-                color="primary" 
+            <Button
+                onClick={handleShowSolicitudes}
+                variant="contained"
+                color="primary"
                 style={{ position: 'fixed', top: '15px', right: '50px', left: '50px' }}>
                 Ver todos solicitudes
             </Button>
-            <Button 
-                onClick={handleNavigate} 
-                variant="contained" 
-                color="secondary" 
+            <Button
+                onClick={handleNavigate}
+                variant="contained"
+                color="secondary"
                 style={{ position: 'fixed', top: '53px', right: '50px', left: '50px' }}>
                 Volver
             </Button>
@@ -86,9 +86,9 @@ const AllSolicitudes = () => {
                             ))}
                         </TableBody>
                     </Table>
-                    
+
                 </TableContainer>
-                
+
             )}
         </Container>
     );
