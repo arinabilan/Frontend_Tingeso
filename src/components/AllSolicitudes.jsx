@@ -20,9 +20,10 @@ const AllSolicitudes = () => {
 
     const handleShowSolicitudes = () => setShowSolicitudes(true);
 
-    const handleEvaluate = (e, solicitudId) => {
+    const handleEvaluate = (e, solicitudId, state) => {
         e.preventDefault();
-        loanService.modificateSolicitude(solicitudId, userExecutive, 1)
+        state = state < 1? 1 : state;
+        loanService.modificateSolicitude(solicitudId, userExecutive, state)
             .then((response) => {
                 console.log('Solicitud modificada:', response.data);
                 localStorage.setItem('solicitudCliente', JSON.stringify(response.data));
@@ -77,7 +78,7 @@ const AllSolicitudes = () => {
                                         <Button
                                             variant="contained"
                                             color="secondary"
-                                            onClick={(e) => handleEvaluate(e, solicitud.id)}
+                                            onClick={(e) => handleEvaluate(e, solicitud.id, solicitud.state)}
                                         >
                                             Evaluar
                                         </Button>

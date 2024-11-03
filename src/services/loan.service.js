@@ -28,6 +28,10 @@ const modificateSolicitude = (id, executive, state) => {
     return httpClient.put(`/api/v1/solicitude/${id}/${state}`, executive);
 }
 
+const evaluateSolicitude = (id) => {
+    return httpClient.get(`/api/v1/solicitude/evaluate/${id}`);
+}
+
 const getPercent = (rate) => {
     return httpClient.get(`/api/v1/loanRequirements/${rate}/rate`);
 }
@@ -36,4 +40,5 @@ const getYears = (month) => {
     return httpClient.get(`/api/v1/loanRequirements/${month}/years/loan`);
 }
 
-export default { getLoanRequirements, getLoanTypes, getLoanRequirementById, createSolicitude, getAllSolicitudes, modificateSolicitude, getSolicitude, getPercent, getYears };
+export default { getLoanRequirements, getLoanTypes, getLoanRequirementById, createSolicitude,
+    getAllSolicitudes, modificateSolicitude, getSolicitude, getPercent, getYears, evaluateSolicitude };

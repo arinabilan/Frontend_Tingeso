@@ -70,29 +70,62 @@ const Evaluate = () => {
         mediaSalary: 0,
         monthlyDebt: 0
     });
-    //const [clientSolicitude, setClientSolicitude] = useState({});
     const [client, setClient] = useState({});
+    const [solicitudCliente, setSolicitudCliente] = useState({
+        id: 0,
+        amount: 0,
+        interestRate: 0,
+        deadline: 0,
+        date: new Date(),
+        state: 0,
+        client: {},
+        loanType: { id: 0, type: '' }
+    });
 
+    let _solicitudCliente = JSON.parse(localStorage.getItem('solicitudCliente'));
     const navigate = useNavigate();
-    const solicitudCliente = JSON.parse(localStorage.getItem('solicitudCliente'));
 
     useEffect(() => {
         loadEverythingIneed();
     }, []);
 
+    const getStateFromSolicitude = (solicitud) => {
+        switch (solicitud.state) {
+            case 1:
+                return 'En Revisión Inicial';
+            case 2:
+                return 'Pendiente de Documentación';
+            case 3:
+                return 'En Evaluación';
+            case 4:
+                return 'Pre-Aprobada';
+            case 5:
+                return 'En Aprobación Final';
+            case 6:
+                return 'Aproada';
+            case 7:
+                return 'Rechazada';
+            case 8:
+                return 'Cancelada por el Cliente';
+            default:
+                return 'En Revisión Inicial';
+        }
+    }
 
     const loadEverythingIneed = async () => {
         try {
-            const response = await clientService.getClientDates(solicitudCliente.client.id);
+            setSolicitudCliente(_solicitudCliente);
+
+            const response = await clientService.getClientDates(_solicitudCliente.client.id);
             setClientDates(response.data); //obtengo datos del cliente
 
-            const responseClient = await clientService.getClient(solicitudCliente.client.id);
+            const responseClient = await clientService.getClient(_solicitudCliente.client.id);
             setClient(responseClient.data); //obtengo cliente
 
-            const responseCapacity = await clientService.getClientCapacity(solicitudCliente.client.id);
+            const responseCapacity = await clientService.getClientCapacity(_solicitudCliente.client.id);
             setClientSavingCapacity(responseCapacity.data); //obtengo capacidad de ahorro del cliente
 
-            const responseDocuments = await documentService.getDocumentsByClientId(solicitudCliente.client.id);
+            const responseDocuments = await documentService.getDocumentsByClientId(_solicitudCliente.client.id);
             setClientDocument(responseDocuments.data); //obtengo documentos del cliente
 
             //console.log("Datos del cliente cargados:", response.data); // Verifica que los datos se están cargando correctamente
@@ -113,6 +146,14 @@ const Evaluate = () => {
         try {
             await clientService.updateDates(clientDates);
             await clientService.updateCapacity(clientSavingCapacity);
+            let solicitud = await loanService.evaluateSolicitude(solicitudCliente.id);
+            console.log('Evaluación de Solicitud evaluada:', solicitud);
+            if (solicitud.data) {
+                alert("Solicitud evaluada, queda con estado: " + getStateFromSolicitude(solicitud.data));
+                localStorage.setItem('solicitudCliente', JSON.stringify(solicitud.data));
+                //solicitudCliente = JSON.parse(localStorage.getItem('solicitudCliente'));
+                setSolicitudCliente(JSON.parse(localStorage.getItem('solicitudCliente')));
+            }
         }
         catch (error) {
             console.error("Error al evaluar solicitud:", error);
@@ -122,7 +163,7 @@ const Evaluate = () => {
     return (
         <Container>
             <Typography variant="h4" gutterBottom>
-                Evaluación de Solicitud
+                Evaluación de Solicitud <span style={{fontSize:'20px', fontWeight:'bold'}}>({getStateFromSolicitude(solicitudCliente)})</span>
             </Typography>
 
             <TableContainer component={Paper} style={{ marginTop: '20px' }}>
