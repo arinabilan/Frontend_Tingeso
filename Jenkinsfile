@@ -1,7 +1,7 @@
 pipeline {
     agent any
     tools{
-        nodejs 'nodejs_22.9.0'
+        nodejs 'nodejs_20.18.0'
     }
     stages{
         stage('Clone repository'){
