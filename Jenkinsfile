@@ -6,7 +6,7 @@ pipeline {
     stages{
         stage('Clone repository'){
             steps{
-                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/arinabilan/ArinaBilan_24326485-8']])
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/arinabilan/Frontend_Tingeso']])
             }
         }
 
