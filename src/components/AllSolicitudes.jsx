@@ -13,6 +13,29 @@ const AllSolicitudes = () => {
         loadSolicitude();
     }, []);
 
+    const getStateFromSolicitude = (solicitud) => {
+        switch (solicitud.state) {
+            case 1:
+                return 'En Revisión Inicial';
+            case 2:
+                return 'Pendiente de Documentación';
+            case 3:
+                return 'En Evaluación';
+            case 4:
+                return 'Pre-Aprobada';
+            case 5:
+                return 'En Aprobación Final';
+            case 6:
+                return 'Aproada';
+            case 7:
+                return 'Rechazada';
+            case 8:
+                return 'Cancelada por el Cliente';
+            default:
+                return 'En Revisión Inicial';
+        }
+    }
+
     const loadSolicitude = async () => {
         const response = await loanService.getAllSolicitudes();
         setAllSolicitudes(response.data);
@@ -20,9 +43,10 @@ const AllSolicitudes = () => {
 
     const handleShowSolicitudes = () => setShowSolicitudes(true);
 
-    const handleEvaluate = (e, solicitudId) => {
+    const handleEvaluate = (e, solicitudId, state) => {
         e.preventDefault();
-        loanService.modificateSolicitude(solicitudId, userExecutive, 1)
+        state = state < 1? 1 : state;
+        loanService.modificateSolicitude(solicitudId, userExecutive, state)
             .then((response) => {
                 console.log('Solicitud modificada:', response.data);
                 localStorage.setItem('solicitudCliente', JSON.stringify(response.data));
@@ -62,6 +86,7 @@ const AllSolicitudes = () => {
                                 <TableCell>Monto</TableCell>
                                 <TableCell>Tasa de Interés</TableCell>
                                 <TableCell>Fecha</TableCell>
+                                <TableCell>Estado</TableCell>
                                 <TableCell>Acción</TableCell>
                             </TableRow>
                         </TableHead>
@@ -73,11 +98,12 @@ const AllSolicitudes = () => {
                                     <TableCell>{solicitud.amount.toLocaleString()} CLP</TableCell>
                                     <TableCell>{(solicitud.interestRate * 100).toFixed(2)}%</TableCell>
                                     <TableCell>{new Date(solicitud.date).toLocaleDateString()}</TableCell>
+                                    <TableCell>{getStateFromSolicitude(solicitud)}</TableCell>
                                     <TableCell>
                                         <Button
                                             variant="contained"
                                             color="secondary"
-                                            onClick={(e) => handleEvaluate(e, solicitud.id)}
+                                            onClick={(e) => handleEvaluate(e, solicitud.id, solicitud.state)}
                                         >
                                             Evaluar
                                         </Button>
