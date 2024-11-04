@@ -14,18 +14,6 @@ pipeline {
             }
         }
 
-        // stage('Install dependencies') {
-        //     steps {
-        //         bat 'npm install'
-        //     }
-        // }
-
-        // stage('Build React App'){
-        //     steps{
-        //         bat 'npm run build'
-        //     }
-        // }
-
         stage('Build docker image'){
             steps{
                 script{
