@@ -289,7 +289,7 @@ const Evaluate = () => {
                 </Grid>
                 <Grid size={4}>
                     <DocumentDisplay
-                        documentTitle="Comprobante de ingresos de 2 años"
+                        documentTitle="Comprobante de ingresos de 2 aÃ±os"
                         clientDocuments={clientDocuments}
                         onSwitchChange={saveDocumentState}
                     />
