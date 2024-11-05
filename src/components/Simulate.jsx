@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import loanService from "../services/loan.service";
 import clientService from "../services/client.service";
+import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Typography, Container, MenuItem, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from '@mui/material';
 
 const Simulate = () => {
@@ -15,6 +16,7 @@ const Simulate = () => {
     const [maxMonths, setMaxMonths] = useState(0);
     const [maxAmount, setMaxAmount] = useState(0);
     const [document, setDocument] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         loadLoanTypes();
@@ -30,6 +32,10 @@ const Simulate = () => {
         const response = await loanService.getLoanRequirements();
         setLoanRequirements(response.data);
     };
+
+    const handleNavigate = () => {
+        navigate("/profile");
+    }
 
     const calculateMonthlyPayment = async () => {
         try{
@@ -108,6 +114,9 @@ const Simulate = () => {
                 style={{ marginTop: '20px' }}
             >
                 Calcular
+            </Button>
+            <Button onClick={handleNavigate} type="submit" variant="contained" color="secondary">
+                        Volver al perfil
             </Button>
             {monthlyPayment && (
                 <Typography variant="h6" style={{ marginTop: '20px' }}>

@@ -14,6 +14,7 @@ import Documents from './components/Documents';
 import Executive from './components/Executive';
 import AllSolicitudes from './components/AllSolicitudes';
 import Evaluate from './components/Evaluate';
+import Clientsolicitudes from './components/Clientsolicitudes';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
             <Route path='/executive' element = {<Executive/>}></Route>
             <Route path='/allsolicitudes' element = {<AllSolicitudes/>}></Route>
             <Route path='/evaluate' element = {<Evaluate/>}></Route>
+            <Route path='/clientsolicitudes' element = {<Clientsolicitudes/>}></Route>
           </Routes>
         
       </div>

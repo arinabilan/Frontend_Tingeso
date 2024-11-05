@@ -25,7 +25,7 @@ const Documents = () => {
         const response = await documentService.getAllDocuments();
         setDocuments(response.data);
 
-        // Obtén los documentos específicos por su título
+        //Obtener los documentos específicos por su título
         const responseSalary = await documentService.getDocumentByTitle('Comprobante de ingresos de 2 años');
         const responseDicom = await documentService.getDocumentByTitle('Certificado Dicom');
         const responseCapacity = await documentService.getDocumentByTitle('Certificado de Cuenta Ahorro');
@@ -56,7 +56,7 @@ const Documents = () => {
             })
             .catch((error) => {
                 console.error(`Error al subir el documento ${docType.title}:`, error);
-                alert("Error al subir documento");
+                alert("Posiblemente ya subio ese documento");
             });
     };
 
@@ -135,7 +135,7 @@ const Documents = () => {
                 color="secondary" 
                 sx={{ marginTop: 2 }}
             >
-                Cancelar
+                Volver al perfil
             </Button>
         </Container>
     );

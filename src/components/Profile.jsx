@@ -45,6 +45,10 @@ const Profile = () => {
         navigate("/");
     }
 
+    const handleSolicitudes = () => {
+        navigate("/clientsolicitudes")
+    }
+
     return (
         <Container>
             <Paper 
@@ -148,6 +152,15 @@ const Profile = () => {
                         style={{ marginTop: '20px', position: 'fixed', top: '220px', right: '1270px', left: '50px' }}
                     >
                         Subir documentos
+                    </Button>
+
+                    <Button 
+                        variant="contained" 
+                        color="primary" 
+                        onClick={handleSolicitudes}
+                        style={{ marginTop: '20px', position: 'fixed', top: '260px', right: '1270px', left: '50px' }}
+                    >
+                        Mis solicitudes
                     </Button>
 
                     <Button 

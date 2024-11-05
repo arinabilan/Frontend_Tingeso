@@ -40,5 +40,9 @@ const getYears = (month) => {
     return httpClient.get(`/api/v1/loanRequirements/${month}/years/loan`);
 }
 
+const getAllSolicitudesByClientId = (id) => {
+    return httpClient.get(`/api/v1/solicitude/${id}/client`)
+}
+
 export default { getLoanRequirements, getLoanTypes, getLoanRequirementById, createSolicitude,
-    getAllSolicitudes, modificateSolicitude, getSolicitude, getPercent, getYears, evaluateSolicitude };
+    getAllSolicitudes, modificateSolicitude, getSolicitude, getPercent, getYears, evaluateSolicitude, getAllSolicitudesByClientId };
