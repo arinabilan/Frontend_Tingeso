@@ -32,7 +32,7 @@ const AllSolicitudes = () => {
             case 8:
                 return 'Cancelada por el Cliente';
             default:
-                return 'En Revisión Inicial';
+                return 'Sin revisar';
         }
     }
 

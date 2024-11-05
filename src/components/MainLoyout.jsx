@@ -10,7 +10,7 @@ const MainLayout = () => {
         {/* Contenido Principal */}
         <Container style={{ marginTop: '20px', textAlign: 'center' }}>
           <Typography variant="h4" gutterBottom>
-            Welcome to "Future Bank"
+            Welcome to "PrestaBanco"
           </Typography>
           <Typography variant="body1" gutterBottom>
           Log in to your account or register to start enjoying our services.
