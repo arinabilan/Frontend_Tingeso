@@ -26,7 +26,7 @@ const Documents = () => {
         setDocuments(response.data);
 
         //Obtener los documentos específicos por su título
-        const responseSalary = await documentService.getDocumentByTitle('Comprobante de ingresos de 2 años');
+        const responseSalary = await documentService.getDocumentByTitle('Comprobante de ingresos de 2 aÃ±os');
         const responseDicom = await documentService.getDocumentByTitle('Certificado Dicom');
         const responseCapacity = await documentService.getDocumentByTitle('Certificado de Cuenta Ahorro');
         const responseContract = await documentService.getDocumentByTitle('Contrato laboral');
