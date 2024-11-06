@@ -66,7 +66,7 @@ const AllSolicitudes = () => {
                 variant="contained"
                 color="primary"
                 style={{ position: 'fixed', top: '15px', right: '50px', left: '50px' }}>
-                Ver todos solicitudes
+                Ver todos solicitudes Chile
             </Button>
             <Button
                 onClick={handleNavigate}
